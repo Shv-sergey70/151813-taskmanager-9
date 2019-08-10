@@ -1,8 +1,5 @@
 const path = require(`path`);
 
-console.log(__dirname);
-console.log(path);
-
 module.exports = {
   mode: `development`,
   entry: `./src/main.js`,
