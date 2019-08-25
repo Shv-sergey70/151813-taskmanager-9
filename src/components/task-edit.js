@@ -1,3 +1,5 @@
+import {createElement} from "../util";
+
 const mothsMap = {
   0: `January`,
   1: `Febrary`,
@@ -13,7 +15,31 @@ const mothsMap = {
   11: `December`
 };
 
-export const createTaskEditTemplate = ({description, dueDate, color, repeatingDays, tags}) => `<article class="card card--edit card--${color} ${Object.values(repeatingDays).some((dayValue) => dayValue) ? `
+export default class TaskEdit {
+  constructor({description, dueDate, color, repeatingDays, tags}) {
+    this._description = description;
+    this._dueDate = dueDate;
+    this._color = color;
+    this._repeatingDays = repeatingDays;
+    this._tags = tags;
+
+    this._element = null;
+  }
+
+  getElement() {
+    if (this._element === null) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return `<article class="card card--edit card--${this._color} ${Object.values(this._repeatingDays).some((dayValue) => dayValue) ? `
 card--repeat` : ``}">
             <form class="card__form" method="get">
               <div class="card__inner">
@@ -41,7 +67,7 @@ card--repeat` : ``}">
                       class="card__text"
                       placeholder="Start typing your text here..."
                       name="text"
-                    >${description}</textarea>
+                    >${this._description}</textarea>
                   </label>
                 </div>
 
@@ -59,25 +85,25 @@ card--repeat` : ``}">
                             type="text"
                             placeholder=""
                             name="date"
-                            value="${new Date(dueDate).getDate()} ${mothsMap[new Date(dueDate).getMonth()]} ${new Date(dueDate).getHours()}:${new Date(dueDate).getMinutes()}"
+                            value="${new Date(this._dueDate).getDate()} ${mothsMap[new Date(this._dueDate).getMonth()]} ${new Date(this._dueDate).getHours()}:${new Date(this._dueDate).getMinutes()}"
                           />
                         </label>
                       </fieldset>
 
                       <button class="card__repeat-toggle" type="button">
-                        repeat:<span class="card__repeat-status">${Object.values(repeatingDays).some((dayValue) => dayValue) ? `yes` : `no`}</span>
+                        repeat:<span class="card__repeat-status">${Object.values(this._repeatingDays).some((dayValue) => dayValue) ? `yes` : `no`}</span>
                       </button>
 
                       <fieldset class="card__repeat-days">
                         <div class="card__repeat-days-inner">
-                          ${Object.keys(repeatingDays).map((day) => `
+                          ${Object.keys(this._repeatingDays).map((day) => `
                           <input
                               class="visually-hidden card__repeat-day-input"
                               type="checkbox"
                               id="repeat-${day}-4"
                               name="repeat"
                               value="${day}"
-                              ${repeatingDays[day] ? `checked` : ``}
+                              ${this._repeatingDays[day] ? `checked` : ``}
                             />
                             <label class="card__repeat-day" for="repeat-${day}-4"
                               >${day}</label
@@ -89,7 +115,7 @@ card--repeat` : ``}">
 
                     <div class="card__hashtag">
                       <div class="card__hashtag-list">
-                      ${Array.from(tags).map((tag) => `
+                      ${Array.from(this._tags).map((tag) => `
                       <span class="card__hashtag-inner">
                           <input
                             type="hidden"
@@ -193,3 +219,5 @@ card--repeat` : ``}">
               </div>
             </form>
           </article>`;
+  }
+}
