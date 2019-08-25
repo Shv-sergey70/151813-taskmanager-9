@@ -1,4 +1,24 @@
-export const createSearchTemplate = () => `<section class="main__search search container">
+import {createElement} from "../util";
+
+export default class Search {
+  constructor() {
+    this._element = null;
+  }
+
+  getElement() {
+    if (this._element === null) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return `<section class="main__search search container">
         <input
           type="text"
           id="search__input"
@@ -7,3 +27,5 @@ export const createSearchTemplate = () => `<section class="main__search search c
         />
         <label class="visually-hidden" for="search__input">Search</label>
       </section>`;
+  }
+}
