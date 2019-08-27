@@ -1,4 +1,4 @@
-import {createElement} from "../util";
+import AbstractComponent from "./abstract-component";
 
 const mothsMap = {
   0: `January`,
@@ -15,27 +15,15 @@ const mothsMap = {
   11: `December`
 };
 
-export default class Task {
+export default class Task extends AbstractComponent {
   constructor({description, dueDate, color, repeatingDays, tags}) {
+    super();
+
     this._description = description;
     this._dueDate = dueDate;
     this._color = color;
     this._repeatingDays = repeatingDays;
     this._tags = tags;
-
-    this._element = null;
-  }
-
-  getElement() {
-    if (this._element === null) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 
   getTemplate() {

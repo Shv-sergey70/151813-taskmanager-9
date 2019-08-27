@@ -1,7 +1,11 @@
 import {createElement} from "../util";
 
-export default class BoardContainer {
+export default class AbstractComponent {
   constructor() {
+    if (new.target === AbstractComponent) {
+      throw new Error(`Can't instantiate AbstractComponent, only concrete one.`);
+    }
+
     this._element = null;
   }
 
@@ -18,6 +22,6 @@ export default class BoardContainer {
   }
 
   getTemplate() {
-    return `<section class="board container"></section>`;
+    throw new Error(`Abstract method not implemented: getTemplate`);
   }
 }

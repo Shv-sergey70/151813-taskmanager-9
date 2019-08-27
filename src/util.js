@@ -26,3 +26,5 @@ export const renderElementIn = (component, element, position = Position.BEFOREEN
     }
   }
 };
+
+export const TASKS_COUNT_PER_LOAD = 8;
