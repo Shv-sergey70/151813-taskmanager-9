@@ -28,3 +28,9 @@ export const renderElementIn = (component, element, position = Position.BEFOREEN
 };
 
 export const TASKS_COUNT_PER_LOAD = 8;
+
+export const sortTypes = {
+  DEFAULT: `default`,
+  DATE_UP: `date_up`,
+  DATE_DOWN: `date_down`
+};

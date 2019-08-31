@@ -1,6 +1,6 @@
 import Task from "../components/task";
 import TaskEdit from "../components/task-edit";
-import {renderElementIn, TASKS_COUNT_PER_LOAD} from "../util";
+import {renderElementIn, sortTypes, TASKS_COUNT_PER_LOAD} from "../util";
 import Board from "../components/board";
 import BoardTasks from "../components/board-tasks";
 import NoTasks from "../components/no-tasks";
@@ -14,11 +14,13 @@ export default class BoardController {
     this._boardContainer = new Board();
     this._boardTasksContainer = new BoardTasks();
     this._loadMoreButton = new LoadMoreButton();
+    this._sort = new Sort();
+    this._renderedTasks = [];
   }
 
   init() {
     const onLoadButtonClick = (evt) => {
-      this._tasksData.splice(0, TASKS_COUNT_PER_LOAD).forEach((taskData) => this._renderTask(taskData));
+      this._renderTasks(this._tasksData.splice(0, TASKS_COUNT_PER_LOAD));
 
       if (this._tasksData.length === 0) {
         evt.target.removeEventListener(`click`, onLoadButtonClick);
@@ -29,10 +31,36 @@ export default class BoardController {
     if (this._tasksData.length === 0) {
       renderElementIn(this._boardContainer.getElement(), new NoTasks().getElement());
     } else {
-      renderElementIn(this._boardContainer.getElement(), new Sort().getElement());
-      renderElementIn(this._boardContainer.getElement(), this._boardTasksContainer.getElement());
+      this._sort.getElement().addEventListener(`click`, (evt) => {
+        if (!evt.target.classList.contains(`board__filter`)) {
+          return;
+        }
 
-      this._tasksData.splice(0, TASKS_COUNT_PER_LOAD).forEach((taskData) => this._renderTask(taskData));
+        this._boardTasksContainer.getElement().innerHTML = ``;
+
+        switch (true) {
+          case evt.target.dataset.sort === sortTypes.DEFAULT: {
+            this._renderedTasks.forEach((task) => this._renderTask(task));
+
+            break;
+          }
+          case evt.target.dataset.sort === sortTypes.DATE_UP: {
+            this._renderedTasks.slice().sort((a, b) => a.dueDate - b.dueDate).forEach((task) => this._renderTask(task));
+
+            break;
+          }
+          case evt.target.dataset.sort === sortTypes.DATE_DOWN: {
+            this._renderedTasks.slice().sort((a, b) => b.dueDate - a.dueDate).forEach((task) => this._renderTask(task));
+
+            break;
+          }
+        }
+      });
+      renderElementIn(this._boardContainer.getElement(), this._sort.getElement());
+
+      this._renderTasks(this._tasksData.splice(0, TASKS_COUNT_PER_LOAD));
+
+      renderElementIn(this._boardContainer.getElement(), this._boardTasksContainer.getElement());
 
       this._loadMoreButton.getElement().addEventListener(`click`, onLoadButtonClick);
       renderElementIn(this._boardContainer.getElement(), this._loadMoreButton.getElement());
@@ -67,5 +95,10 @@ export default class BoardController {
     taskEditTextarea.addEventListener(`blur`, () => document.addEventListener(`keydown`, onEscKeydown));
 
     renderElementIn(this._boardTasksContainer.getElement(), task.getElement());
+  }
+
+  _renderTasks(tasksForRender) {
+    tasksForRender.forEach((taskData) => this._renderTask(taskData));
+    this._renderedTasks = this._renderedTasks.concat(tasksForRender);
   }
 }
