@@ -5,7 +5,7 @@ import {generateTaskData} from "./data/task-data";
 import {generateFilterData} from "./data/filter-data";
 import {getRandomInt, renderElementIn, TASKS_COUNT_PER_LOAD} from "./util";
 
-import BoardController from './controllers/board-controller';
+import BoardController from './controllers/board';
 
 const TASKS_COUNT = getRandomInt(20, TASKS_COUNT_PER_LOAD);
 

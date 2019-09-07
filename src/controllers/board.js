@@ -1,11 +1,10 @@
-import Task from "../components/task";
-import TaskEdit from "../components/task-edit";
 import {renderElementIn, sortTypes, TASKS_COUNT_PER_LOAD} from "../util";
 import Board from "../components/board";
 import BoardTasks from "../components/board-tasks";
 import NoTasks from "../components/no-tasks";
 import Sort from "../components/sort";
 import LoadMoreButton from "../components/load-more-button";
+import TaskController from "./task";
 
 export default class BoardController {
   constructor(container, tasksData) {
@@ -16,6 +15,8 @@ export default class BoardController {
     this._loadMoreButton = new LoadMoreButton();
     this._sort = new Sort();
     this._renderedTasks = [];
+
+    this._onDataChange = this._onDataChange.bind(this);
   }
 
   init() {
@@ -40,17 +41,17 @@ export default class BoardController {
 
         switch (true) {
           case evt.target.dataset.sort === sortTypes.DEFAULT: {
-            this._renderedTasks.forEach((task) => this._renderTask(task));
+            this._renderedTasks.forEach((taskData) => this._renderTask(taskData));
 
             break;
           }
           case evt.target.dataset.sort === sortTypes.DATE_UP: {
-            this._renderedTasks.slice().sort((a, b) => a.dueDate - b.dueDate).forEach((task) => this._renderTask(task));
+            this._renderedTasks.slice().sort((a, b) => a.dueDate - b.dueDate).forEach((taskData) => this._renderTask(taskData));
 
             break;
           }
           case evt.target.dataset.sort === sortTypes.DATE_DOWN: {
-            this._renderedTasks.slice().sort((a, b) => b.dueDate - a.dueDate).forEach((task) => this._renderTask(task));
+            this._renderedTasks.slice().sort((a, b) => b.dueDate - a.dueDate).forEach((taskData) => this._renderTask(taskData));
 
             break;
           }
@@ -69,36 +70,22 @@ export default class BoardController {
     renderElementIn(this._container, this._boardContainer.getElement());
   }
 
-  _renderTask(taskData) {
-    const task = new Task(taskData);
-    const taskEdit = new TaskEdit(taskData);
-    const taskEditTextarea = taskEdit.getElement().querySelector(`textarea.card__text`);
-
-    task.getElement().querySelector(`.card__btn--edit`).addEventListener(`click`, () => {
-      this._boardTasksContainer.getElement().replaceChild(taskEdit.getElement(), task.getElement());
-      document.addEventListener(`keydown`, onEscKeydown);
-    });
-
-    taskEdit.getElement().querySelector(`.card__form`).addEventListener(`submit`, () => {
-      this._boardTasksContainer.getElement().replaceChild(task.getElement(), taskEdit.getElement());
-      document.removeEventListener(`keydown`, onEscKeydown);
-    });
-
-    const onEscKeydown = (evt) => {
-      if ((evt.key === `Esc` || evt.key === `Escape`)) {
-        this._boardTasksContainer.getElement().replaceChild(task.getElement(), taskEdit.getElement());
-        document.removeEventListener(`keydown`, onEscKeydown);
-      }
-    };
-
-    taskEditTextarea.addEventListener(`focus`, () => document.removeEventListener(`keydown`, onEscKeydown));
-    taskEditTextarea.addEventListener(`blur`, () => document.addEventListener(`keydown`, onEscKeydown));
-
-    renderElementIn(this._boardTasksContainer.getElement(), task.getElement());
-  }
-
   _renderTasks(tasksForRender) {
     tasksForRender.forEach((taskData) => this._renderTask(taskData));
     this._renderedTasks = this._renderedTasks.concat(tasksForRender);
+  }
+
+  _rerenderTasks() {
+    this._boardTasksContainer.getElement().innerText = ``;
+    this._renderedTasks.forEach((taskData) => this._renderTask(taskData));
+  }
+
+  _renderTask(taskData) {
+    new TaskController(this._boardTasksContainer, taskData, this._onDataChange).init();
+  }
+
+  _onDataChange(newData, oldData) {
+    this._renderedTasks[this._renderedTasks.findIndex((taskData) => taskData === oldData)] = newData;
+    this._rerenderTasks();
   }
 }

@@ -34,3 +34,10 @@ export const sortTypes = {
   DATE_UP: `date_up`,
   DATE_DOWN: `date_down`
 };
+
+export const availableTasksColors = [`black`, `yellow`, `blue`, `green`, `pink`];
+const key = {
+  SPACE: `space`
+};
+
+export const isSpaceKeydown = (code) => code.toLowerCase() === key.SPACE;

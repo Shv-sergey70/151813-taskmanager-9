@@ -16,7 +16,7 @@ const mothsMap = {
 };
 
 export default class Task extends AbstractComponent {
-  constructor({description, dueDate, color, repeatingDays, tags}) {
+  constructor({description, dueDate, color, repeatingDays, tags, isFavorite, isArchive}) {
     super();
 
     this._description = description;
@@ -24,6 +24,8 @@ export default class Task extends AbstractComponent {
     this._color = color;
     this._repeatingDays = repeatingDays;
     this._tags = tags;
+    this._isFavorite = isFavorite;
+    this._isArchive = isArchive;
   }
 
   getTemplate() {
@@ -34,25 +36,22 @@ export default class Task extends AbstractComponent {
             <button type="button" class="card__btn card__btn--edit">
               edit
             </button>
-            <button type="button" class="card__btn card__btn--archive">
+            <button type="button" class="card__btn card__btn--archive ${this._isArchive ? `` : `card__btn--disabled`}">
               archive
             </button>
-            <button
-              type="button"
-              class="card__btn card__btn--favorites card__btn--disabled"
-            >
-              favorites
-            </button>
-          </div>
-    
-          <div class="card__color-bar">
-            <svg class="card__color-bar-wave" width="100%" height="10">
-              <use xlink:href="#wave"></use>
-            </svg>
-          </div>
-    
-          <div class="card__textarea-wrap">
-            <p class="card__text">${this._description}</p>
+            <button type="button" class="card__btn card__btn--favorites ${this._isFavorite ? `` : `card__btn--disabled`}">
+                favorites
+              </button>
+            </div>
+      
+            <div class="card__color-bar">
+              <svg class="card__color-bar-wave" width="100%" height="10">
+                <use xlink:href="#wave"></use>
+              </svg>
+            </div>
+      
+            <div class="card__textarea-wrap">
+              <p class="card__text">${this._description}</p>
           </div>
     
           <div class="card__settings">
