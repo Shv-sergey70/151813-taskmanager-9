@@ -27,11 +27,14 @@ export default class TaskEdit extends AbstractComponent {
     this._tags = tags;
     this._isFavorite = isFavorite;
     this._isArchive = isArchive;
+
+    this._setDueDateTogglerHandler();
+    this._setDayRepeatTogglerHandler();
   }
 
   getTemplate() {
-    return `<article class="card card--edit card--${this._color} ${Object.values(this._repeatingDays).some((dayValue) => dayValue) ? `
-card--repeat` : ``}">
+    const isCardRepeats = Object.values(this._repeatingDays).some((dayValue) => dayValue);
+    return `<article class="card card--edit card--${this._color} ${isCardRepeats ? `card--repeat` : ``}">
             <form class="card__form" method="get">
               <div class="card__inner">
                 <div class="card__control">
@@ -77,11 +80,11 @@ card--repeat` : ``}">
                       </fieldset>
 
                       <button class="card__repeat-toggle" type="button">
-                        repeat:<span class="card__repeat-status">${Object.values(this._repeatingDays).some((dayValue) => dayValue) ? `yes` : `no`}</span>
+                        repeat:<span class="card__repeat-status">${isCardRepeats ? `yes` : `no`}</span>
                       </button>
 
-                      <fieldset class="card__repeat-days">
-                        <div class="card__repeat-days-inner">
+                      <fieldset class="card__repeat-days ${isCardRepeats ? `` : `visually-hidden`}">
+                          <div class="card__repeat-days-inner">
                           ${Object.keys(this._repeatingDays).map((day) => `
                           <input
                               class="visually-hidden card__repeat-day-input"
@@ -143,6 +146,46 @@ card--repeat` : ``}">
               </div>
             </form>
           </article>`;
+  }
+
+  _setDueDateTogglerHandler() {
+    this.getElement().querySelector(`.card__date-deadline-toggle`).addEventListener(`click`, (evt) => {
+      evt.preventDefault();
+
+      const dateStatusElement = this.getElement().querySelector(`.card__date-status`);
+
+      if (dateStatusElement.textContent === `yes`) {
+        dateStatusElement.textContent = `no`;
+        this.getElement().querySelector(`.card__date-deadline`).classList.add(`visually-hidden`);
+      } else {
+        dateStatusElement.textContent = `yes`;
+        this.getElement().querySelector(`.card__date-deadline`).classList.remove(`visually-hidden`);
+      }
+
+      this.getElement().querySelector(`input[name='date']`).value = `${new Date(this._dueDate).getDate()} ${mothsMap[new Date(this._dueDate).getMonth()]} ${new Date(this._dueDate).getHours()}:${new Date(this._dueDate).getMinutes()}`;
+    });
+  }
+
+  _setDayRepeatTogglerHandler() {
+    this.getElement().querySelector(`.card__repeat-toggle`).addEventListener(`click`, (evt) => {
+      evt.preventDefault();
+
+      const repeatStatusElement = this.getElement().querySelector(`.card__repeat-status`);
+
+      if (repeatStatusElement.textContent === `yes`) {
+        repeatStatusElement.textContent = `no`;
+        this.getElement().classList.remove(`card--repeat`);
+        this.getElement().querySelector(`.card__repeat-days`).classList.add(`visually-hidden`);
+      } else {
+        repeatStatusElement.textContent = `yes`;
+        this.getElement().classList.add(`card--repeat`);
+        this.getElement().querySelector(`.card__repeat-days`).classList.remove(`visually-hidden`);
+      }
+
+      this.getElement().querySelectorAll(`input[name='repeat']`).forEach((dayInput) => {
+        dayInput.checked = this._repeatingDays[dayInput.value];
+      });
+    });
   }
 
   _renderHashtags() {
