@@ -1,5 +1,12 @@
 import AbstractComponent from "./abstract-component";
-import {availableTasksColors, createElement, Position, renderElementIn} from "../util";
+import {
+  availableTasksColors,
+  createElement,
+  isEnterKeydown,
+  isInputTag,
+  Position,
+  renderElementIn,
+} from "../util";
 
 const mothsMap = {
   0: `January`,
@@ -30,6 +37,8 @@ export default class TaskEdit extends AbstractComponent {
 
     this._setDueDateTogglerHandler();
     this._setDayRepeatTogglerHandler();
+    this._setColorPickerHandler();
+    this._setHashTagsHandler();
   }
 
   getTemplate() {
@@ -188,8 +197,39 @@ export default class TaskEdit extends AbstractComponent {
     });
   }
 
+  _setColorPickerHandler() {
+    this.getElement().querySelector(`.card__colors-wrap`).addEventListener(`click`, (evt) => {
+      if (isInputTag(evt.target.tagName)) {
+        evt.preventDefault();
+        availableTasksColors.forEach((color) => this._element.classList.remove(`card--${color}`));
+        this._element.classList.add(`card--${evt.target.value}`);
+      }
+    });
+  }
+
+  _setHashTagsHandler() {
+    this.getElement().querySelector(`input[name='hashtag-input']`).addEventListener(`keydown`, (evt) => {
+      if (isEnterKeydown(evt.code)) {
+        evt.preventDefault();
+        this._tags.add(evt.target.value);
+        this._renderHashtag(evt.target.value);
+        evt.target.value = ``;
+      }
+    });
+
+    this.getElement().querySelector(`.card__hashtag-list`).addEventListener(`click`, (evt) => {
+      if (evt.target.classList.contains(`card__hashtag-delete`)) {
+        evt.target.closest(`.card__hashtag-inner`).remove();
+      }
+    });
+  }
+
   _renderHashtags() {
     return Array.from(this._tags).map((tag) => this._getHashtagTemplate(tag)).join(``);
+  }
+
+  _renderHashtag(tagValue) {
+    renderElementIn(this._element.querySelector(`.card__hashtag-list`), createElement(this._getHashtagTemplate(tagValue)), Position.BEFOREEND);
   }
 
   _getHashtagTemplate(tag) {
@@ -198,9 +238,5 @@ export default class TaskEdit extends AbstractComponent {
           <p class="card__hashtag-name">#${tag}</p>
           <button type="button" class="card__hashtag-delete">delete</button>
       </span>`;
-  }
-
-  renderHashtag(tagValue) {
-    renderElementIn(this._element.querySelector(`.card__hashtag-list`), createElement(this._getHashtagTemplate(tagValue)), Position.BEFOREEND);
   }
 }

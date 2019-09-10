@@ -70,20 +70,6 @@ export default class TaskController {
       this._onDataChange(entry, this._taskData);
     });
 
-    taskEdit.getElement().querySelector(`input[name='hashtag-input']`).addEventListener(`keydown`, (evt) => {
-      if (isSpaceKeydown(evt.code)) {
-        this._taskData.tags.add(evt.target.value);
-        taskEdit.renderHashtag(evt.target.value);
-        evt.target.value = ``;
-      }
-    });
-
-    taskEdit.getElement().querySelector(`.card__hashtag-list`).addEventListener(`click`, (evt) => {
-      if (evt.target.classList.contains(`card__hashtag-delete`)) {
-        evt.target.closest(`.card__hashtag-inner`).remove();
-      }
-    });
-
     const onEscKeydown = (evt) => {
       if ((evt.key === `Esc` || evt.key === `Escape`)) {
         this._container.getElement().replaceChild(task.getElement(), taskEdit.getElement());

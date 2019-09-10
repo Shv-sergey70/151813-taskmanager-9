@@ -37,7 +37,9 @@ export const sortTypes = {
 
 export const availableTasksColors = [`black`, `yellow`, `blue`, `green`, `pink`];
 const key = {
-  SPACE: `space`
+  ENTER: `enter`
 };
 
-export const isSpaceKeydown = (code) => code.toLowerCase() === key.SPACE;
+export const isEnterKeydown = (code) => code.toLowerCase() === key.ENTER;
+
+export const isInputTag = (tagName) => tagName.toLowerCase() === `input`;
