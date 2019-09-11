@@ -8,21 +8,6 @@ import {
   renderElementIn,
 } from "../util";
 
-const mothsMap = {
-  0: `January`,
-  1: `Febrary`,
-  2: `March`,
-  3: `April`,
-  4: `May`,
-  5: `June`,
-  6: `July`,
-  7: `August`,
-  8: `September`,
-  9: `October`,
-  10: `November`,
-  11: `December`
-};
-
 export default class TaskEdit extends AbstractComponent {
   constructor({description, dueDate, color, repeatingDays, tags, isFavorite, isArchive}) {
     super();
@@ -83,7 +68,7 @@ export default class TaskEdit extends AbstractComponent {
                             type="text"
                             placeholder=""
                             name="date"
-                            value="${new Date(this._dueDate).getDate()} ${mothsMap[new Date(this._dueDate).getMonth()]} ${new Date(this._dueDate).getHours()}:${new Date(this._dueDate).getMinutes()}"
+                            value=""
                           />
                         </label>
                       </fieldset>
@@ -171,7 +156,7 @@ export default class TaskEdit extends AbstractComponent {
         this.getElement().querySelector(`.card__date-deadline`).classList.remove(`visually-hidden`);
       }
 
-      this.getElement().querySelector(`input[name='date']`).value = `${new Date(this._dueDate).getDate()} ${mothsMap[new Date(this._dueDate).getMonth()]} ${new Date(this._dueDate).getHours()}:${new Date(this._dueDate).getMinutes()}`;
+      this.getElement().querySelector(`input[name='date']`).value = this._dueDate;
     });
   }
 
