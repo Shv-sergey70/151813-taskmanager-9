@@ -34,3 +34,12 @@ export const sortTypes = {
   DATE_UP: `date_up`,
   DATE_DOWN: `date_down`
 };
+
+export const availableTasksColors = [`black`, `yellow`, `blue`, `green`, `pink`];
+const key = {
+  ENTER: `enter`
+};
+
+export const isEnterKeydown = (code) => code.toLowerCase() === key.ENTER;
+
+export const isInputTag = (tagName) => tagName.toLowerCase() === `input`;

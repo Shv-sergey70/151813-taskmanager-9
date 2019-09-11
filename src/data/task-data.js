@@ -1,4 +1,4 @@
-import {getRandomInt} from "../util";
+import {availableTasksColors, getRandomInt} from "../util";
 
 export const generateTaskData = () => ({
   description: [
@@ -12,9 +12,9 @@ export const generateTaskData = () => ({
     'tu': false,
     'we': Boolean(Math.round(Math.random())),
     'th': false,
-    'fr': false,
+    'fr': Boolean(Math.round(Math.random())),
     'sa': false,
-    'su': false
+    'su': Boolean(Math.round(Math.random())),
   },
   tags: new Set([
     `homework`,
@@ -25,13 +25,7 @@ export const generateTaskData = () => ({
     `business`,
     `weekend`
   ].sort(() => 0.5 - Math.random()).slice(0, getRandomInt(3))),
-  color: [
-    `black`,
-    `yellow`,
-    `blue`,
-    `green`,
-    `pink`
-  ][Math.floor(Math.random() * 5)],
+  color: availableTasksColors[Math.floor(Math.random() * availableTasksColors.length)],
   isFavorite: Boolean(Math.round(Math.random())),
   isArchive: Boolean(Math.round(Math.random()))
 });
