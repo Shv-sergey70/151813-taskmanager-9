@@ -16,7 +16,10 @@ export default class BoardController {
     this._sort = new Sort();
     this._renderedTasks = [];
 
+    this._subscriptions = [];
+
     this._onDataChange = this._onDataChange.bind(this);
+    this._onChangeView = this._onChangeView.bind(this);
   }
 
   init() {
@@ -81,11 +84,17 @@ export default class BoardController {
   }
 
   _renderTask(taskData) {
-    new TaskController(this._boardTasksContainer, taskData, this._onDataChange).init();
+    const taskController = new TaskController(this._boardTasksContainer, taskData, this._onDataChange, this._onChangeView);
+    taskController.init();
+    this._subscriptions.push(taskController.setDefaultView.bind(taskController));
   }
 
   _onDataChange(newData, oldData) {
     this._renderedTasks[this._renderedTasks.findIndex((taskData) => taskData === oldData)] = newData;
     this._rerenderTasks();
+  }
+
+  _onChangeView() {
+    this._subscriptions.forEach((subscription) => subscription());
   }
 }
