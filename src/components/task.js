@@ -1,19 +1,5 @@
 import AbstractComponent from "./abstract-component";
-
-const mothsMap = {
-  0: `January`,
-  1: `Febrary`,
-  2: `March`,
-  3: `April`,
-  4: `May`,
-  5: `June`,
-  6: `July`,
-  7: `August`,
-  8: `September`,
-  9: `October`,
-  10: `November`,
-  11: `December`
-};
+import moment from 'moment';
 
 export default class Task extends AbstractComponent {
   constructor({description, dueDate, color, repeatingDays, tags, isFavorite, isArchive}) {
@@ -59,15 +45,15 @@ export default class Task extends AbstractComponent {
               <div class="card__dates">
                 <div class="card__date-deadline">
                   <p class="card__input-deadline-wrap">
-                    <span class="card__date">${new Date(this._dueDate).getDate()} ${mothsMap[new Date(this._dueDate).getMonth()]}</span>
-                    <span class="card__time">${new Date(this._dueDate).getHours()}:${new Date(this._dueDate).getMinutes()}</span>
-                  </p>
+                    <span class="card__date">${moment(this._dueDate).format(`D MMMM`)}</span>
+                    <span class="card__time">${moment(this._dueDate).format(`hh:mm A`)}</span>
+                    </p>
+                  </div>
                 </div>
-              </div>
-    
-              <div class="card__hashtag">
-                <div class="card__hashtag-list">
-                  ${Array.from(this._tags).map((tag) => `
+      
+                <div class="card__hashtag">
+                  <div class="card__hashtag-list">
+${Array.from(this._tags).map((tag) => `
                   <span class="card__hashtag-inner">
                     <span class="card__hashtag-name">
                       #${tag}

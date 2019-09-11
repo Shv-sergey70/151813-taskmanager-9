@@ -1,6 +1,10 @@
 import Task from "../components/task";
 import TaskEdit from "../components/task-edit";
 import {renderElementIn} from "../util";
+import flatpickr from "flatpickr";
+import 'flatpickr/dist/flatpickr.min.css';
+import 'flatpickr/dist/themes/light.css';
+import moment from 'moment';
 
 export default class TaskController {
   constructor(container, taskData, onDataChange, onChangeView) {
@@ -15,6 +19,13 @@ export default class TaskController {
   }
 
   init() {
+    flatpickr(this._taskEdit.getElement().querySelector(`input[name="date"]`), {
+      altInput: true,
+      enableTime: true,
+      dateFormat: `Z`,
+      altFormat: `d F, h:i K`,
+      defaultDate: this._taskData.dueDate
+    });
     const taskEditTextarea = this._taskEdit.getElement().querySelector(`textarea.card__text`);
 
     this._taskView.getElement().querySelector(`.card__btn--archive`).addEventListener(`click`, () => {
@@ -49,7 +60,7 @@ export default class TaskController {
       const formData = new FormData(this._taskEdit.getElement().querySelector(`.card__form`));
       const entry = {
         description: formData.get(`text`),
-        color: formData.get(`color`),
+        color: moment(formData.get(`color`)).format(`x`),
         tags: new Set(formData.getAll(`hashtag`)),
         dueDate: formData.get(`date`),
         repeatingDays: formData.getAll(`repeat`).reduce((accumulator, day) => {
